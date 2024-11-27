@@ -1,0 +1,15 @@
+const userModel = require("../database/UserModel")
+
+const isAllowed = async (req, res, next) =>{
+const {user} = req.user;
+const isUser = await userModel.findOne({email:user});
+if(!isUser)
+    return res.status(401).json({ msg: "Unauthorized: invalid user" });
+if(isUser.role === "admin"){
+    next();
+}else{
+    return res.status(401).json({ msg: "Unauthorized: action is not allowed" });
+}
+}
+
+module.exports = isAllowed;
